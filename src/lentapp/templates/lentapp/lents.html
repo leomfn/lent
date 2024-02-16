@@ -1,0 +1,45 @@
+{% extends 'lentapp/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for lent in lent_list %}
+      <div class="col">
+        <div class="card h-100">
+          <img src="{% static 'img/bike.jpg' %}" class="card-img-top" alt="Item image" />
+          <div class="card-body">
+            <h5 class="card-title">{{ lent.item.name }}</h5>
+            <p class="card-text">
+              {% if lent.status == 'active' %}
+                <small class="text-muted">
+                  <i class="fa-solid fa-circle fa-beat" style="color: #26a269;"></i>
+                  active until {{ lent.time_end }}
+                </small>
+              {% elif lent.status == 'planned' %}
+                <small class="text-muted">
+                  <i class="fa-regular fa-circle" style="color: #26a269;"></i>
+                  scheduled for {{ lent.time_start }}
+                </small>
+              {% elif lent.status == 'overdue' %}
+                <small class="text-muted">
+                  <i class="fa-solid fa-circle" style="color: #a51d2d;"></i>
+                  overdue since {{ lent.time_end }}
+                </small>
+              {% elif lent.status == 'returned' %}
+                <small class="text-muted">
+                  <i class="fa-solid fa-flag-checkered"></i>
+                  returned {{ lent.time_return }}
+                </small>
+              {% endif %}
+            </p>
+          </div>
+          <div class="card-footer">
+            <div>
+              <small class="text-muted">{{ lent.time_start }} - {{ lent.time_end }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

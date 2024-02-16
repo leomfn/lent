@@ -1,1 +1,3 @@
 Django
+django-bootstrap-v5
+fontawesomefree
