@@ -50,13 +50,50 @@
 
   <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for item in item_list %}
+      <div class="modal fade" id="termsModal{{ item.id }}" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="termsModalLabel">Terms and conditions</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <h4>Use terms</h4>
+              <p>{{ item.use_conditions }}</p>
+
+              <h4>Pick up and return</h4>
+              <p>You can pick up the item at {{ datetime_start|time }} on {{ datetime_start|date }}</p>
+              <p>The item must be returned by {{ datetime_end|time }} on {{ datetime_end|date }}</p>
+
+              <h4>Lent it or leave it</h4>
+              <p>
+                By clicking <strong>I Accept</strong>, you agree to these terms. The booking will be completed afterwards.
+              </p>
+            </div>
+            <div class="modal-footer">
+              <form action="{% url 'book-item' item.id %}" method="post" class="">
+                {% csrf_token %}
+                <input type="hidden" name="datetime_start" value="{{ datetime_start|date:'c' }}" />
+                <input type="hidden" name="datetime_end" value="{{ datetime_end|date:'c' }}" />
+                <button type="submit" class="btn btn-success">I Accept</button>
+              </form>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              {% comment %} <button type="submit" class="btn btn-primary" form="termsAvailableItemsForm">Search</button> {% endcomment %}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="col">
         <div class="card h-100">
           <img src="{% static 'img/bike.jpg' %}" class="card-img-top" alt="Item image" />
           <div class="card-header">
-            {% block itemcard_buttons %}
-              <button class="btn btn-outline-secondary">Details</button>
-            {% endblock %}
+            <div class="d-flex justify-content-start">
+              {% block additional_itemcard_buttons %}
+
+              {% endblock %}
+              <button class="btn btn-outline-primary">Details</button>
+            </div>
           </div>
           {% comment %} <div class="card-img-overlay"></div> {% endcomment %}
           <div class="card-body">

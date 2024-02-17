@@ -110,11 +110,8 @@ def filtered_items(
 
 
 def lents(request):
+    user = request.user
 
-    # TODO: remove hard coded USER_ID
-    USER_ID = 2
-
-    user = get_object_or_404(User, id=USER_ID)
     lents = ItemLend.objects.filter(user=user)
     lent_items = LendItem.objects.filter(itemlend__in=lents)
 
@@ -124,3 +121,34 @@ def lents(request):
     }
 
     return HttpResponse(render(request, "lentapp/lents.html", context))
+
+
+def book_item(request, item_id: int):
+    if request.method == "POST":
+        item = LendItem.objects.get(id=item_id)
+        item.itemlend_set.create(
+            item=item,
+            user=request.user,
+            time_start=request.POST["datetime_start"],
+            time_end=request.POST["datetime_end"],
+            time_lend=timezone.now(),
+        )
+
+    return HttpResponseRedirect(reverse("lents"))
+
+
+def return_item(request, lent_id: int):
+    if request.method == "POST":
+        lent = ItemLend.objects.get(id=lent_id)
+        lent.time_return = timezone.now()
+        lent.save()
+
+    return HttpResponseRedirect(reverse("lents"))
+
+
+def cancel_lent(request, lent_id: int):
+    if request.method == "POST":
+        lent = ItemLend.objects.get(id=lent_id)
+        lent.delete()
+
+    return HttpResponseRedirect(reverse("lents"))

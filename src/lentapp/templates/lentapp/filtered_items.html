@@ -26,7 +26,14 @@
   {% endif %}
 {% endblock %}
 
-{% block itemcard_buttons %}
-  <button class="btn btn-success">Book</button>
-  <button class="btn btn-outline-secondary">Details</button>
+{% block additional_itemcard_buttons %}
+  <div class="me-2">
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#termsModal{{item.id}}">Book</button>
+    {% comment %} <form action="{% url 'book-item' item.id %}" method="post" class="">
+      {% csrf_token %}
+      <input type="hidden" name="datetime_start" value="{{ datetime_start|date:'c' }}" />
+      <input type="hidden" name="datetime_end" value="{{ datetime_end|date:'c' }}" />
+      <button type="submit" class="btn btn-success">Book</button>
+    </form> {% endcomment %}
+  </div>
 {% endblock %}
