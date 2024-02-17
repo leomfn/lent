@@ -38,7 +38,7 @@ class LendItem(models.Model):
         ).exists()
 
     def is_available_between(
-        self, datetime_start: timezone, datetime_end: timezone
+        self, datetime_start: datetime.datetime, datetime_end: datetime.datetime
     ) -> bool:
         return not self.itemlend_set.filter(
             Q(time_start__lt=datetime_end) & Q(time_end__gt=datetime_start)
@@ -86,12 +86,16 @@ class ItemLend(models.Model):
         return f"{self.item.name} lent to {self.user.username} from {self.time_start} to {self.time_end}"
 
     def status(self):
+        current_time = timezone.now()
         returned = self.time_return is not None
-        lent_end_in_past = self.time_end < timezone.now()
-        lent_start_in_future = self.time_start > timezone.now()
+        lent_end_in_past = self.time_end < current_time
+        lent_start_in_future = self.time_start > current_time
 
-        # if lent_start_in_past and not returned:
-        if not self.item.is_currently_available() and not returned:
+        if (
+            current_time > self.time_start
+            and current_time < self.time_end
+            and not returned
+        ):
             return "active"
         elif lent_end_in_past and not returned:
             return "overdue"

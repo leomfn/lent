@@ -1,52 +1,112 @@
 import datetime
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.urls import reverse
+from django.utils import timezone
 from django.utils.timezone import make_aware
 
 from .models import ItemLend, LendItem
 
-
-def index(request):
-    return HttpResponse("Hello, world. You're at the lentapp index.")
+from .forms import BookSlotForm
 
 
-def login(request):
-    return HttpResponse(render(request, "lentapp/login.html"))
+# def login(request):
+#     return HttpResponse(render(request, "lentapp/login.html"))
 
 
 def items(request):
+    if request.method == "POST":
+        form = BookSlotForm(request.POST)
+        if form.is_valid():
+            form_data = form.cleaned_data
+            date_start = form_data["date_start"]
+            time_start = form_data["time_start"]
+            duration = form_data["duration"]
+            datetime_start = datetime.datetime.combine(date_start, time_start)
+            datetime_end = datetime_start + datetime.timedelta(hours=duration)
+            timestamp_start = int(datetime_start.timestamp())
+            timestamp_end = int(datetime_end.timestamp())
+
+            return HttpResponseRedirect(
+                reverse("filtered-items", args=(timestamp_start, timestamp_end))
+            )
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        current_time = timezone.now()
+        form = BookSlotForm(
+            {
+                "date_start": current_time,
+                "time_start": current_time.strftime("%H:%M"),
+            }
+        )
+
     items = LendItem.objects.all()
 
     context = {
         "item_list": items,
+        "form": form,
     }
 
     return HttpResponse(render(request, "lentapp/items.html", context))
 
 
-def filtered_items(request, time_start_unix: int, time_end_unix: int):
+def filtered_items(
+    request,
+    timestamp_start: int,
+    timestamp_end: int,
+):
+    if request.method == "POST":
+        form = BookSlotForm(request.POST)
+        if form.is_valid():
+            form_data = form.cleaned_data
+            date_start = form_data["date_start"]
+            time_start = form_data["time_start"]
+            duration = form_data["duration"]
+            datetime_start = datetime.datetime.combine(date_start, time_start)
+            datetime_end = datetime_start + datetime.timedelta(hours=duration)
+            timestamp_start = int(datetime_start.timestamp())
+            timestamp_end = int(datetime_end.timestamp())
+
+            return HttpResponseRedirect(
+                reverse("filtered-items", args=(timestamp_start, timestamp_end))
+            )
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        current_time = timezone.now()
+        form = BookSlotForm(
+            {
+                "date_start": current_time,
+                "time_start": current_time.strftime("%H:%M"),
+            }
+        )
+
     # TODO: return error if times are in the past
 
-    time_start = make_aware(datetime.datetime.utcfromtimestamp(time_start_unix))
-    time_end = make_aware(datetime.datetime.utcfromtimestamp(time_end_unix))
+    datetime_start = make_aware(datetime.datetime.utcfromtimestamp(timestamp_start))
+    datetime_end = make_aware(datetime.datetime.utcfromtimestamp(timestamp_end))
+    duration = (datetime_end - datetime_start).total_seconds() / 3600
 
     all_items = LendItem.objects.all()
 
     items = [
-        item for item in all_items if item.is_available_between(time_start, time_end)
+        item
+        for item in all_items
+        if item.is_available_between(datetime_start, datetime_end)
     ]
-
-    print(time_start_unix, time_start)
-    print(time_end_unix, time_end)
-    print(items)
 
     context = {
         "item_list": items,
+        "datetime_start": datetime_start,
+        "datetime_end": datetime_end,
+        "duration": duration,
+        "form": form,
     }
 
-    return HttpResponse(render(request, "lentapp/items.html", context))
+    return HttpResponse(render(request, "lentapp/filtered_items.html", context))
 
 
 def lents(request):

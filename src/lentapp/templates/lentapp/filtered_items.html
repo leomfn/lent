@@ -1,0 +1,32 @@
+{% extends 'lentapp/items.html' %}
+
+{% block content_top %}
+  {% if item_list %}
+    <div class="container pt-4">
+      <div class="alert alert-success d-flex align-items-center justify-content-between" role="alert">
+        <div>
+          Choose an item to book for <strong>{{ duration }} hours</strong> from {{ datetime_start }} to {{ datetime_end }}
+        </div>
+        <div>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">Change time</button>
+          <a role="button" href="{% url 'items' %}" class="btn btn-primary">Show all items</a>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="container pt-4">
+      <div class="alert alert-warning d-flex align-items-center justify-content-between" role="alert">
+        <div>No item available between {{ datetime_start }} and {{ datetime_end }}</div>
+        <div>
+          <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#filterModal">Change time</button>
+          <a role="button" href="{% url 'items' %}" class="btn btn-warning">Show all items</a>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block itemcard_buttons %}
+  <button class="btn btn-success">Book</button>
+  <button class="btn btn-outline-secondary">Details</button>
+{% endblock %}
