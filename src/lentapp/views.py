@@ -113,10 +113,21 @@ def lents(request):
     user = request.user
 
     lents = ItemLend.objects.filter(user=user)
-    lent_items = LendItem.objects.filter(itemlend__in=lents)
+    lent_items = LendItem.objects.filter(itemlend__in=lents).distinct()
+
+    distinct_items_with_lents = [
+        {
+            "item": item,
+            "lents": sorted(
+                lents.filter(user=user, item=item),
+                key=lambda lent: (lent.status().value, -lent.time_start.timestamp()),
+            ),
+        }
+        for item in lent_items
+    ]
 
     context = {
-        "item_list": lent_items,
+        "item_list": distinct_items_with_lents,
         "lent_list": lents,
     }
 
