@@ -4,6 +4,84 @@
 {% block content %}
   <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for lent in lent_list %}
+      {% if lent.status == 'active' or lent.status == 'overdue' %}
+        <div class="modal fade" id="returnModal{{ lent.id }}" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="returnModalLabel">Return {{ lent.item.name }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                {% if lent.status == 'active' %}
+                  <h4>
+                    <i class="fa-solid fa-circle fa-beat" style="color: #26a269;"></i>
+                    Status: active
+                  </h4>
+                  <p>
+                    You can keep using the item until <strong>{{ lent.time_end }}</strong>. Return it earlier if you don't need it anymore so others can use it.
+                  </p>
+                {% elif lent.status == 'overdue' %}
+                  <h4>
+                    <i class="fa-solid fa-circle" style="color: #a51d2d;"></i>
+                    Status: overdue
+                  </h4>
+                  <p>
+                    You should have returned the item by <strong>{{ lent.time_end }}</strong>. Please return it immediately!
+                  </p>
+                  <h4>Return conditions</h4>
+                  <p>Make sure everything is fine. Make sure to report any damages or problems you encountered with {{ lent.item.name }}.</p>
+                  <h4>Sure you want to return it now?</h4>
+                  <p>
+                    By clicking <strong>Return now</strong>, you agree that the item is returned according to these conditions. The item will be .
+                  </p>
+                {% endif %}
+              </div>
+              <div class="modal-footer">
+                <form action="{% url 'return-item' lent.id %}" method="post" class="">
+                  {% csrf_token %}
+                  {% comment %} <input type="hidden" name="datetime_start" value="{{ datetime_start|date:'c' }}" />
+                  <input type="hidden" name="datetime_end" value="{{ datetime_end|date:'c' }}" /> {% endcomment %}
+                  <button type="submit" class="btn btn-danger">Return now</button>
+
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% elif lent.status == 'planned' %}
+        <div class="modal fade" id="cancelModal{{ lent.id }}" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="cancelModalLabel">Cancel {{ lent.item.name }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <h4>Details</h4>
+                <p>Planned start: {{ lent.time_start }}</p>
+                <p>Planned return time: {{ lent.time_end }}</p>
+                <h4>Sure you want to return it now?</h4>
+                <p>
+                  After clicking <strong>Yes, cancel</strong> your reservation will be removed immediately.
+                </p>
+              </div>
+              <div class="modal-footer">
+                <form action="{% url 'cancel-lent' lent.id %}" method="post" class="">
+                  {% csrf_token %}
+                  <input type="hidden" name="datetime_start" value="{{ datetime_start|date:'c' }}" />
+                  <input type="hidden" name="datetime_end" value="{{ datetime_end|date:'c' }}" />
+                  <button type="submit" class="btn btn-danger">Yes, cancel</button>
+
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
       <div class="col">
         <div class="card h-100">
           <img src="{% static 'img/bike.jpg' %}" class="card-img-top" alt="Item image" />
@@ -30,6 +108,12 @@
                   <i class="fa-solid fa-flag-checkered"></i>
                   returned {{ lent.time_return }}
                 </small>
+              {% endif %}
+
+              {% if lent.status == 'active' or lent.status == 'overdue' %}
+                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#returnModal{{ lent.id }}">Return</button>
+              {% elif lent.status == 'planned' %}
+                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal{{ lent.id }}">Cancel</button>
               {% endif %}
             </p>
           </div>

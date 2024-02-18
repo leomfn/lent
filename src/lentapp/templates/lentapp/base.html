@@ -34,27 +34,29 @@
       <div class="container">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-          <a class="navbar-brand" href="/">Lent</a>
+          <a class="navbar-brand" href="{% url "home" %}">Lent</a>
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link" href="/items">Items</a>
+              <a class="nav-link" href="{% url "items" %}">Items</a>
             </li>
-            <li class="nav-item">
+            {% comment %} <li class="nav-item">
               <a class="nav-link" href="#">Calendar</a>
-            </li>
+            </li> {% endcomment %}
             <li class="nav-item">
-              <a class="nav-link" href="/lents">My lents</a>
+              <a class="nav-link" href="{% url "lents" %}">My lents</a>
             </li>
           </ul>
-          <form class="d-flex">
+          {% comment %} <form class="d-flex">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
             <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
+          </form> {% endcomment %}
         </div>
       </div>
     </nav>
 
-    <div class="container pt-5">
+    {% block content_top %}{% endblock content_top %}
+
+    <div class="container pt-4">
       {% block content %}
 
       {% endblock %}

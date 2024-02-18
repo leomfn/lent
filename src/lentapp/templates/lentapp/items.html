@@ -1,6 +1,15 @@
 {% extends 'lentapp/base.html' %}
 {% load static %}
 
+{% block content_top %}
+  <div class="container pt-4">
+    <div class="alert alert-primary d-flex align-items-center justify-content-between" role="alert">
+      <div>You need to select a date, time, and duration in order to book an item</div>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">Choose a Time</button>
+    </div>
+  </div>
+{% endblock %}
+
 {% block content %}
   <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -10,21 +19,23 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form class="row gy-2 gx-3 align-items-center" id="filterAvailableItemsForm">
-            <div class="col-auto">
-              <label for="startDate" class="visually-hidden">Start</label>
-              <div class="input-group">
-                <div class="input-group-text">Start</div>
-                <!-- TODO: automatically set min and value -->
-                <input class="form-control" type="datetime-local" id="startDate" name="startDate" min="2024-02-14T08:30" value="2024-02-14T20:30" required />
-              </div>
+          <form action="/items/" method="post" class="" id="filterAvailableItemsForm">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="mb-3">
+              <label for="{{ form.date_start.id_for_label }}">Date</label>
+              {{ form.date_start }}
             </div>
-            <div class="col-auto">
-              <label for="duration" class="visually-hidden">Duration (hours)</label>
+            <div class="mb-3">
+              <label for="{{ form.time_start.id_for_label }}">Time</label>
+              {{ form.time_start }}
+            </div>
+            <div class="">
+              <label for="{{ form.duration.id_for_label }}">Duration (hours)</label>
               <div class="input-group">
-                <div class="input-group-text">Duration</div>
-                <input type="number" class="form-control" id="duration" min="0" max="24" step="0.5" required />
-                <div class="input-group-text">h</div>
+                {{ form.duration }}
+                <div class="input-group-text">hours</div>
               </div>
             </div>
           </form>
@@ -37,38 +48,52 @@
     </div>
   </div>
 
-  {% comment %} <form>
-    <div class="form-row align-items-center">
-      <div class="col-auto">
-        <label for="start-date">Start Date:</label>
-        <input class="form-control" type="date" id="start-date" name="start-date" required />
-      </div>
-      <div class="col-auto">
-        <label for="start-time">Start Time:</label>
-        <input class="form-control" type="time" id="start-time" name="start-time" required />
-      </div>
-      <div class="col-auto">
-        <label for="user-name">Your Name:</label>
-        <input class="form-control" type="text" id="user-name" name="user-name" required />
-      </div>
-      <div class="col-auto">
-        <label for="email">Your Email:</label>
-        <input class="form-control" type="email" id="email" name="email" required />
-      </div>
-      <div class="col-auto">
-        <button class="btn btn-primary" type="submit">Show available items</button>
-      </div>
-    </div>
-  </form> {% endcomment %}
-
   <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for item in item_list %}
+      <div class="modal fade" id="termsModal{{ item.id }}" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="termsModalLabel">Terms and conditions</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <h4>Use terms</h4>
+              <p>{{ item.use_conditions }}</p>
+
+              <h4>Pick up and return</h4>
+              <p>You can pick up the item at {{ datetime_start|time }} on {{ datetime_start|date }}</p>
+              <p>The item must be returned by {{ datetime_end|time }} on {{ datetime_end|date }}</p>
+
+              <h4>Lent it or leave it</h4>
+              <p>
+                By clicking <strong>I Accept</strong>, you agree to these terms. The booking will be completed afterwards.
+              </p>
+            </div>
+            <div class="modal-footer">
+              <form action="{% url 'book-item' item.id %}" method="post" class="">
+                {% csrf_token %}
+                <input type="hidden" name="datetime_start" value="{{ datetime_start|date:'c' }}" />
+                <input type="hidden" name="datetime_end" value="{{ datetime_end|date:'c' }}" />
+                <button type="submit" class="btn btn-success">I Accept</button>
+              </form>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              {% comment %} <button type="submit" class="btn btn-primary" form="termsAvailableItemsForm">Search</button> {% endcomment %}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="col">
         <div class="card h-100">
           <img src="{% static 'img/bike.jpg' %}" class="card-img-top" alt="Item image" />
           <div class="card-header">
-            <button class="btn btn-success">Book</button>
-            <button class="btn btn-outline-secondary">Details</button>
+            <div class="d-flex justify-content-start">
+              {% block additional_itemcard_buttons %}
+
+              {% endblock %}
+              <button class="btn btn-outline-primary">Details</button>
+            </div>
           </div>
           {% comment %} <div class="card-img-overlay"></div> {% endcomment %}
           <div class="card-body">
@@ -94,7 +119,9 @@
     {% endfor %}
   </div>
 
-  <div class="fixed-bottom text-center mb-4">
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">Find available items</button>
-  </div>
+  {% comment %} <div class="fixed-bottom text-center mb-4">
+    {% block item_filter_button %}
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">Find available items</button>
+    {% endblock %}
+  </div> {% endcomment %}
 {% endblock %}
