@@ -2,6 +2,8 @@
 
 Lent is a Django application enabling its users to easily borrow an item for a specific timeslot.
 
+![output](https://github.com/leomfn/lent/assets/99895548/67630111-010d-40b0-a3a3-1b3fd787493c)
+
 ## Development notes
 
 ### Setup
