@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.db.models import Q
+from .enums import Status
 
 
 class LendItem(models.Model):
@@ -34,14 +35,17 @@ class LendItem(models.Model):
     def is_currently_available(self):
         current_time = timezone.now()
         return not self.itemlend_set.filter(
-            time_start__lte=current_time, time_end__gte=current_time
+            time_start__lte=current_time,
+            time_end__gte=current_time,
+            time_return__isnull=True,
         ).exists()
 
     def is_available_between(
         self, datetime_start: datetime.datetime, datetime_end: datetime.datetime
     ) -> bool:
         return not self.itemlend_set.filter(
-            Q(time_start__lt=datetime_end) & Q(time_end__gt=datetime_start)
+            Q(time_return__isnull=True)
+            | (Q(time_start__lt=datetime_end) & Q(time_return__gt=datetime_start))
         ).exists()
 
     def get_current_lent(self):
@@ -54,7 +58,7 @@ class LendItem(models.Model):
             time_start__lte=current_time, time_end__gte=current_time
         )
 
-    def will_be_available_at(self):
+    def next_availability(self):
         if self.is_currently_available():
             return None
 
@@ -96,13 +100,13 @@ class ItemLend(models.Model):
             and current_time < self.time_end
             and not returned
         ):
-            return "active"
+            return Status.ACTIVE
         elif lent_end_in_past and not returned:
-            return "overdue"
+            return Status.OVERDUE
         elif lent_start_in_future:
-            return "planned"
+            return Status.PLANNED
         elif returned:
-            return "returned"
+            return Status.RETURNED
 
 
 class ItemType(models.Model):

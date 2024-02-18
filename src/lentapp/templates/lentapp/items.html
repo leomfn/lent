@@ -99,7 +99,6 @@
           <div class="card-body">
             <h5 class="card-title">{{ item.name }}</h5>
             <p class="card-text">{{ item.description }}</p>
-            <p class="card-text">{{ item.use_conditions|safe }}</p>
           </div>
           <div class="card-footer">
             {% if item.is_currently_available %}
@@ -110,7 +109,7 @@
             {% else %}
               <small class="text-muted">
                 <i class="fa-regular fa-hourglass-half" style="color: #e5a50a;"></i>
-                available after {{ item.will_be_available_at }}
+                available after {{ item.next_availability }}
               </small>
             {% endif %}
           </div>
