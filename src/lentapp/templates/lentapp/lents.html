@@ -1,5 +1,6 @@
 {% extends 'lentapp/base.html' %}
 {% load static %}
+{% load tz %}
 
 {% block modals %}
   {% for lent in lent_list %}
@@ -18,7 +19,7 @@
                   Status: active
                 </h4>
                 <p>
-                  You can keep using the item until <strong>{{ lent.time_end }}</strong>. Return it earlier if you don't need it anymore so others can use it.
+                  You can keep using the item until <strong>{{ lent.time_end|localtime }}</strong>. Return it earlier if you don't need it anymore so others can use it.
                 </p>
               {% elif lent.status.name == 'OVERDUE' %}
                 <h4>
@@ -26,7 +27,7 @@
                   Status: overdue
                 </h4>
                 <p>
-                  You should have returned the item by <strong>{{ lent.time_end }}</strong>. Please return it immediately!
+                  You should have returned the item by <strong>{{ lent.time_end|localtime }}</strong>. Please return it immediately!
                 </p>
                 <h4>Return conditions</h4>
                 <p>Make sure everything is fine. Make sure to report any damages or problems you encountered with {{ lent.item.name }}.</p>
@@ -58,9 +59,9 @@
             </div>
             <div class="modal-body">
               <h4>Details</h4>
-              <p>Planned start: {{ lent.time_start }}</p>
-              <p>Planned return time: {{ lent.time_end }}</p>
-              <h4>Sure you want to return it now?</h4>
+              <p>Planned start: {{ lent.time_start|localtime }}</p>
+              <p>Planned return time: {{ lent.time_end|localtime }}</p>
+              <h4>Sure you want to cancel?</h4>
               <p>
                 After clicking <strong>Yes, cancel</strong> your reservation will be removed immediately.
               </p>
@@ -68,8 +69,6 @@
             <div class="modal-footer">
               <form action="{% url 'cancel-lent' lent.id %}" method="post" class="">
                 {% csrf_token %}
-                <input type="hidden" name="datetime_start" value="{{ datetime_start|date:'c' }}" />
-                <input type="hidden" name="datetime_end" value="{{ datetime_end|date:'c' }}" />
                 <button type="submit" class="btn btn-danger">Yes, cancel</button>
               </form>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
@@ -98,22 +97,22 @@
                 {% if lent.status.name == 'ACTIVE' %}
                   <small class="text-muted">
                     <i class="fa-solid fa-circle fa-beat" style="color: #26a269;"></i>
-                    active until {{ lent.time_end }}
+                    active until {{ lent.time_end|localtime }}
                   </small>
                 {% elif lent.status.name == 'PLANNED' %}
                   <small class="text-muted">
                     <i class="fa-regular fa-circle" style="color: #26a269;"></i>
-                    scheduled for {{ lent.time_start }}
+                    scheduled for {{ lent.time_start|localtime }}
                   </small>
                 {% elif lent.status.name == 'OVERDUE' %}
                   <small class="text-muted">
                     <i class="fa-solid fa-circle" style="color: #a51d2d;"></i>
-                    <strong>overdue</strong> since {{ lent.time_end }}
+                    <strong>overdue</strong> since {{ lent.time_end|localtime }}
                   </small>
                 {% elif lent.status.name == 'RETURNED' %}
                   <small class="text-muted">
                     <i class="fa-solid fa-flag-checkered"></i>
-                    returned {{ lent.time_return }}
+                    returned {{ lent.time_return|localtime }}
                   </small>
                 {% endif %}
 

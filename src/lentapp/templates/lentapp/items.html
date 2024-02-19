@@ -1,5 +1,6 @@
 {% extends 'lentapp/base.html' %}
 {% load static %}
+{% load tz %}
 
 {% block content_top %}
   <div class="container pt-4">
@@ -62,8 +63,8 @@
               <p>{{ item.use_conditions }}</p>
 
               <h4>Pick up and return</h4>
-              <p>You can pick up the item at {{ datetime_start|time }} on {{ datetime_start|date }}</p>
-              <p>The item must be returned by {{ datetime_end|time }} on {{ datetime_end|date }}</p>
+              <p>You can pick up the item at {{ datetime_start|localtime|time }} on {{ datetime_start|localtime|date }}</p>
+              <p>The item must be returned by {{ datetime_end|localtime|time }} on {{ datetime_end|localtime|date }}</p>
 
               <h4>Lent it or leave it</h4>
               <p>
