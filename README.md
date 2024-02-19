@@ -52,6 +52,9 @@ python src/manage.py migrate
 * `DEBUG`: Django is set to debug mode of environmental is set to 'ON'
 * `DB_FILE_PATH`: path to database file including file name
 * `STATIC_FILES_PATH`: path to static files like pictures
+* `TIME_ZONE`: Time zone to be used for the frontend, should reflect the time zone of userbase/items (e. g. 'Europe/Berlin')
+* `LANGUAGE_CODE`: sets locale for displaying date, time formats etc. (e. g. 'en-us' or 'de-de')
+    * ⚠️ doesn't work yet for input format in form fields, depends on browser locale
 
 ### Docker for production environment
 

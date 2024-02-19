@@ -38,8 +38,8 @@ def items(request):
         current_time = timezone.now()
         form = BookSlotForm(
             {
-                "date_start": current_time,
-                "time_start": current_time.strftime("%H:%M"),
+                "date_start": timezone.localtime(current_time).strftime("%Y-%m-%d"),
+                "time_start": timezone.localtime(current_time).strftime("%H:%M"),
             }
         )
 
@@ -79,15 +79,15 @@ def filtered_items(
         current_time = timezone.now()
         form = BookSlotForm(
             {
-                "date_start": current_time,
-                "time_start": current_time.strftime("%H:%M"),
+                "date_start": timezone.localtime(current_time).strftime("%Y-%m-%d"),
+                "time_start": timezone.localtime(current_time).strftime("%H:%M"),
             }
         )
 
     # TODO: return error if times are in the past
 
-    datetime_start = make_aware(datetime.datetime.utcfromtimestamp(timestamp_start))
-    datetime_end = make_aware(datetime.datetime.utcfromtimestamp(timestamp_end))
+    datetime_start = make_aware(datetime.datetime.fromtimestamp(timestamp_start))
+    datetime_end = make_aware(datetime.datetime.fromtimestamp(timestamp_end))
     duration = (datetime_end - datetime_start).total_seconds() / 3600
 
     all_items = LendItem.objects.all()

@@ -44,7 +44,11 @@ class LendItem(models.Model):
         self, datetime_start: datetime.datetime, datetime_end: datetime.datetime
     ) -> bool:
         return not self.itemlend_set.filter(
-            Q(time_return__isnull=True)
+            (
+                Q(time_return__isnull=True)
+                & Q(time_start__lt=datetime_end)
+                & Q(time_end__gt=datetime_start)
+            )
             | (Q(time_start__lt=datetime_end) & Q(time_return__gt=datetime_start))
         ).exists()
 
