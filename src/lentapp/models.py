@@ -59,7 +59,9 @@ class LendItem(models.Model):
         current_time = timezone.now()
 
         return self.itemlend_set.get(
-            time_start__lte=current_time, time_end__gte=current_time
+            time_start__lte=current_time,
+            time_end__gte=current_time,
+            time_return__isnull=True,
         )
 
     def next_availability(self):

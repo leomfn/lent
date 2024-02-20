@@ -15,5 +15,4 @@ urlpatterns = [
     path("items/book/<int:item_id>/", views.book_item, name="book-item"),
     path("items/return/<int:lent_id>/", views.return_item, name="return-item"),
     path("items/cancel/<int:lent_id>/", views.cancel_lent, name="cancel-lent"),
-    # path("login/", views.login, name="login"),
 ]
