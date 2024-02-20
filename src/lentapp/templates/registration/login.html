@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login to lent</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+      body,
+      html {
+        height: 100%;
+      }
+      .vertical-center {
+        min-height: 100%;
+        display: flex;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body class="vertical-center">
+    <div class="container" style="max-width: 30rem;">
+      <h1><strong>LENT</strong> still testing...</h1>
+      {% if form.errors %}
+        <div class="alert alert-danger">Your username and password didn't match. Please try again.</div>
+      {% endif %}
+
+      {% if next %}
+        <div class="alert alert-warning">
+          {% if user.is_authenticated %}
+            Your account doesn't have access to this page. To proceed, please login with an account that has access.
+          {% else %}
+            Please login to see this page.
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="card">
+        <div class="card-body card-primary">
+          <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+
+            <div class="form-floating mb-3">
+              <input type="text" name="{{ form.username.name }}" class="form-control" id="{{ form.username.id_for_label }}" placeholder="Username" required />
+              <div class="invalid-feedback">{{ form.username.errors }}</div>
+              <label for="{{ form.username.id_for_label }}">Username</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="password" name="{{ form.password.name }}" class="form-control" id="{{ form.password.id_for_label }}" placeholder="Password" required />
+              <div class="invalid-feedback">{{ form.password.errors }}</div>
+              <label for="{{ form.password.id_for_label }}">Password</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg d-block mx-auto">Login</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

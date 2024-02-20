@@ -1,6 +1,10 @@
 import datetime
+from django.conf import settings
+from django.core.exceptions import BadRequest
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.urls import reverse
@@ -12,10 +16,7 @@ from .models import ItemLend, LendItem
 from .forms import BookSlotForm
 
 
-# def login(request):
-#     return HttpResponse(render(request, "lentapp/login.html"))
-
-
+@login_required
 def items(request):
     if request.method == "POST":
         form = BookSlotForm(request.POST)
@@ -53,6 +54,7 @@ def items(request):
     return HttpResponse(render(request, "lentapp/items.html", context))
 
 
+@login_required
 def filtered_items(
     request,
     timestamp_start: int,
@@ -109,6 +111,7 @@ def filtered_items(
     return HttpResponse(render(request, "lentapp/filtered_items.html", context))
 
 
+@login_required
 def lents(request):
     user = request.user
 
@@ -134,6 +137,7 @@ def lents(request):
     return HttpResponse(render(request, "lentapp/lents.html", context))
 
 
+@login_required
 def book_item(request, item_id: int):
     if request.method == "POST":
         item = LendItem.objects.get(id=item_id)
@@ -144,22 +148,30 @@ def book_item(request, item_id: int):
             time_end=request.POST["datetime_end"],
             time_lend=timezone.now(),
         )
+    else:
+        raise BadRequest
 
     return HttpResponseRedirect(reverse("lents"))
 
 
+@login_required
 def return_item(request, lent_id: int):
     if request.method == "POST":
-        lent = ItemLend.objects.get(id=lent_id)
+        lent = ItemLend.objects.get(user=request.user, id=lent_id)
         lent.time_return = timezone.now()
         lent.save()
+    else:
+        raise BadRequest
 
     return HttpResponseRedirect(reverse("lents"))
 
 
+@login_required
 def cancel_lent(request, lent_id: int):
     if request.method == "POST":
-        lent = ItemLend.objects.get(id=lent_id)
+        lent = ItemLend.objects.get(user=request.user, id=lent_id)
         lent.delete()
+    else:
+        raise BadRequest
 
     return HttpResponseRedirect(reverse("lents"))
