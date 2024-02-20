@@ -1,9 +1,7 @@
 import datetime
-from django.conf import settings
 from django.core.exceptions import BadRequest
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
