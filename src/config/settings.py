@@ -30,6 +30,7 @@ ALLOWED_HOSTS = os.environ["HOST"].split(",")
 
 # Additional security settings
 if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
@@ -45,8 +46,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "bootstrap5",
-    "fontawesomefree",
 ]
 
 MIDDLEWARE = [
@@ -86,7 +85,6 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.environ["DB_FILE_PATH"],
-        # "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -126,7 +124,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 # automatically adds trailing slash if necessary
-# STATIC_ROOT = os.path.join(os.environ["STATIC_FILES_PATH"], "")
+STATIC_ROOT = os.path.join(os.environ["STATIC_FILES_PATH"], "")
 STATIC_URL = "static/"
 
 # Default primary key field type

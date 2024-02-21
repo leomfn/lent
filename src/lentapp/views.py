@@ -3,8 +3,6 @@ from django.core.exceptions import BadRequest
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.timezone import make_aware
@@ -35,10 +33,23 @@ def items(request):
     # if a GET (or any other method) we'll create a blank form
     else:
         current_time = timezone.now()
+
+        current_minutes_of_quarter = current_time.minute % 15
+        minutes_to_add = (
+            15 - current_minutes_of_quarter
+            if current_minutes_of_quarter <= 10
+            else 30 - current_minutes_of_quarter
+        )
+        next_quarter_hour = current_time.replace(
+            second=0, microsecond=0
+        ) + datetime.timedelta(minutes=minutes_to_add)
+
         form = BookSlotForm(
             {
-                "date_start": timezone.localtime(current_time).strftime("%Y-%m-%d"),
-                "time_start": timezone.localtime(current_time).strftime("%H:%M"),
+                "date_start": timezone.localtime(next_quarter_hour).strftime(
+                    "%Y-%m-%d"
+                ),
+                "time_start": timezone.localtime(next_quarter_hour).strftime("%H:%M"),
             }
         )
 
@@ -77,10 +88,23 @@ def filtered_items(
     # if a GET (or any other method) we'll create a blank form
     else:
         current_time = timezone.now()
+
+        current_minutes_of_quarter = current_time.minute % 15
+        minutes_to_add = (
+            15 - current_minutes_of_quarter
+            if current_minutes_of_quarter <= 10
+            else 30 - current_minutes_of_quarter
+        )
+        next_quarter_hour = current_time.replace(
+            second=0, microsecond=0
+        ) + datetime.timedelta(minutes=minutes_to_add)
+
         form = BookSlotForm(
             {
-                "date_start": timezone.localtime(current_time).strftime("%Y-%m-%d"),
-                "time_start": timezone.localtime(current_time).strftime("%H:%M"),
+                "date_start": timezone.localtime(next_quarter_hour).strftime(
+                    "%Y-%m-%d"
+                ),
+                "time_start": timezone.localtime(next_quarter_hour).strftime("%H:%M"),
             }
         )
 

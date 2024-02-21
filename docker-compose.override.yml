@@ -1,0 +1,11 @@
+services:
+  lent-app:
+    build: .
+    ports:
+      - 8011:8000
+    env_file:
+      - .env.dev
+    volumes:
+      - ./data:/data
+      - ./static:/static
+      - ./src:/src

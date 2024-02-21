@@ -7,3 +7,4 @@ services:
       - .env.prod
     volumes:
       - ./data:/data
+      - ./static:/static

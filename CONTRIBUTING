@@ -1,0 +1,16 @@
+To automatically check for leaked secrets and apply autoformatting (see .pre-commit-config.yaml), you should install the supplied pre-commit hooks. They are run before each commit.
+
+Install pre-commit via pip
+```sh
+python -m pip install pre-commit
+```
+
+Install the supplied hooks
+```sh
+pre-commit autoupdate && pre-commit install
+```
+
+Run hooks manually
+```sh
+pre-commit run --all-files
+```

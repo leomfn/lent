@@ -3,10 +3,16 @@
 {% load tz %}
 
 {% block content_top %}
-  <div class="container pt-4">
-    <div class="alert alert-primary d-flex align-items-center justify-content-between" role="alert">
-      <div>You need to select a date, time, and duration in order to book an item</div>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">Choose a Time</button>
+  <div class="container">
+    <div class="alert alert-primary" role="alert">
+      <div class="d-flex flex-column flex-md-row align-items-center">
+        <div class="flex-grow-1">
+          You need to select a <strong>date</strong>, <strong>time</strong>, and <strong>duration</strong> in order to book an item.
+        </div>
+        <div>
+          <button type="button" class="btn btn-primary text-nowrap mt-2" data-bs-toggle="modal" data-bs-target="#filterModal">Choose a time</button>
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}
@@ -33,7 +39,7 @@
               {{ form.time_start }}
             </div>
             <div class="">
-              <label for="{{ form.duration.id_for_label }}">Duration (hours)</label>
+              <label for="{{ form.duration.id_for_label }}">Duration</label>
               <div class="input-group">
                 {{ form.duration }}
                 <div class="input-group-text">hours</div>
@@ -79,7 +85,6 @@
                 <button type="submit" class="btn btn-success">I Accept</button>
               </form>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              {% comment %} <button type="submit" class="btn btn-primary" form="termsAvailableItemsForm">Search</button> {% endcomment %}
             </div>
           </div>
         </div>
@@ -87,15 +92,10 @@
 
       <div class="col">
         <div class="card h-100">
-          <img src="{% static 'img/bike.jpg' %}" class="card-img-top" alt="Item image" />
-          <div class="card-header">
-            <div class="d-flex justify-content-start">
-              {% block additional_itemcard_buttons %}
-
-              {% endblock %}
-              <button class="btn btn-outline-primary">Details</button>
-            </div>
-          </div>
+          <img src="{% static 'img/bike_small.jpg' %}" class="card-img-top" alt="Item image" />
+          {% block additional_itemcard_buttons %}
+            {% comment %} <button class="btn btn-outline-primary">Details</button> {% endcomment %}
+          {% endblock %}
           {% comment %} <div class="card-img-overlay"></div> {% endcomment %}
           <div class="card-body">
             <h5 class="card-title">{{ item.name }}</h5>
@@ -107,9 +107,14 @@
                 <i class="fa-solid fa-check" style="color: #26a269;"></i>
                 available now
               </small>
+            {% elif item.is_overdue %}
+              <small class="text-muted">
+                <i class="fa-solid fa-hourglass-end" style="color: #a51d2d;"></i>
+                not returned since {{ item.overdue_since }}
+              </small>
             {% else %}
               <small class="text-muted">
-                <i class="fa-regular fa-hourglass-half" style="color: #e5a50a;"></i>
+                <i class="fa-solid fa-hourglass-half" style="color: #e5a50a;"></i>
                 available after {{ item.next_availability }}
               </small>
             {% endif %}
