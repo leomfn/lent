@@ -1,13 +1,15 @@
 <!DOCTYPE html>
+{% load static %}
 
 <html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login to lent</title>
-    {% load bootstrap5 %}
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
+
+    <link href="/static/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script href="/static/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
       body,
       html {
@@ -22,7 +24,10 @@
   </head>
   <body class="vertical-center">
     <div class="container" style="max-width: 30rem;">
-      <h1><strong>LENT</strong> still testing...</h1>
+      <div class="d-flex justify-content-start align-items-center">
+        <img class="m-2" src="{% static 'img/logo.png' %}" alt="Logo" style="width: 100px; height: auto;" />
+        <h1><strong>LENT</strong> still testing...</h1>
+      </div>
       {% if form.errors %}
         <div class="alert alert-danger">Your username and password didn't match. Please try again.</div>
       {% endif %}

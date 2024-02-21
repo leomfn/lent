@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -13,49 +13,121 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="" />
-    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'fontawesomefree/css/regular.css' %}" rel="stylesheet" type="text/css" />
-    {% load bootstrap5 %}
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
+
+    <link href="/static/fontawesome-free-6.5.1-web/css/fontawesome.css" rel="stylesheet" />
+    <link href="/static/fontawesome-free-6.5.1-web/css/solid.css" rel="stylesheet" />
+    <link href="/static/fontawesome-free-6.5.1-web/css/regular.css" rel="stylesheet" />
+    <link href="/static/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="/static/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
       img.card-img-top {
-        max-height: 150px;
+        max-height: 200px;
         width: 100%;
         object-fit: cover;
+      }
+
+      .navbar {
+        -webkit-box-shadow: 0px 0px 5px 0px #606060;
+        -moz-box-shadow: 0px 0px 5px 0px #606060;
+        box-shadow: 0px 0px 5px 0px #606060;
+      }
+
+      {% comment %} Adjust padding for navbars {% endcomment %}
+      body {
+        padding-top: 0.5rem;
+        padding-bottom: 100px;
+      }
+
+      @media (min-width: 992px) {
+        body.fixed-top-padding {
+          padding-top: 80px;
+          padding-bottom: 0.5rem;
+        }
       }
     </style>
   </head>
 
-  <body>
+  <body class="fixed-top-padding fixed-bottom-padding">
     {% block modals %}
 
     {% endblock %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container">
-        <button class="navbar-toggler my-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
-          <div class="d-flex align-items-center p-1">
-            {% comment %} <div class="navbar-toggler-icon"></div> {% endcomment %}
-            <i class="fa-solid fa-caret-down fa-lg"></i>
-            <div class="ms-2">Menu</div>
-          </div>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarToggler">
+
+    {% comment %}Desktop navbar{% endcomment %}
+    <nav class="navbar bg-light fixed-top d-none d-lg-block">
+      <div class="container justify-content-between">
+        <div class="d-flex">
           <a class="navbar-brand" href="{% url 'home' %}">Lent</a>
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'items' %}">Items</a>
-            </li>
-            {% comment %} <li class="nav-item">
-              <a class="nav-link" href="#">Calendar</a>
-            </li> {% endcomment %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'lents' %}">My lents</a>
-            </li>
-          </ul>
-          <div class="d-flex align-items-center">
+          <a href="{% url 'items' %}" class="nav-item nav-link ms-5">
+            <div class="btn {% if request.resolver_match.url_name == 'items' %}bg-dark-subtle{% endif %}">
+              <i class="fa-solid fa-plus {% if request.resolver_match.url_name == 'items' %}fa-lg{% endif %}"></i>
+              Book
+            </div>
+          </a>
+          <a href="{% url 'lents' %}" class="nav-item nav-link ms-2">
+            <div class="btn {% if request.resolver_match.url_name == 'lents' %}bg-dark-subtle{% endif %}">
+              <i class="fa-solid fa-hourglass {% if request.resolver_match.url_name == 'lents' %}fa-lg{% endif %}"></i>
+              My lents
+            </div>
+          </a>
+          <a href="#" class="nav-item nav-link ms-2">
+            <div class="btn {% if request.resolver_match.url_name == 'calendar' %}bg-dark-subtle{% endif %}">
+              <i class="fa-solid fa-calendar {% if request.resolver_match.url_name == 'calendar' %}fa-lg{% endif %}"></i>
+              Calendar
+            </div>
+          </a>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="me-2">
+            <small>You're logged in as <strong>{{ user.username }}</strong></small>
+          </div>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">Logout</button>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    {% comment %}Mobile navbar{% endcomment %}
+    <nav class="navbar bg-light fixed-bottom justify-content-around d-lg-none">
+      <a href="{% url 'items' %}" class="nav-item nav-link text-center">
+        <div class="btn btn-lg {% if request.resolver_match.url_name == 'items' %}bg-dark-subtle{% endif %}">
+          <i class="fa-solid fa-plus"></i>
+        </div>
+        <div>
+          <small>Book</small>
+        </div>
+      </a>
+      <a href="{% url 'lents' %}" class="nav-item nav-link text-center">
+        <div class="btn btn-lg {% if request.resolver_match.url_name == 'lents' %}bg-dark-subtle{% endif %}">
+          <i class="fa-solid fa-hourglass"></i>
+        </div>
+        <div>
+          <small>My lents</small>
+        </div>
+      </a>
+      <a href="#" class="nav-item nav-link text-center">
+        <div class="btn btn-lg {% if request.resolver_match.url_name == 'calendar' %}bg-dark-subtle{% endif %}">
+          <i class="fa-solid fa-calendar"></i>
+        </div>
+        <div>
+          <small>Calendar</small>
+        </div>
+      </a>
+
+      <a href="#" class="nav-item nav-link text-center">
+        <div class="btn btn-lg" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+          <i class="fa-solid fa-gear"></i>
+        </div>
+        <div>
+          <small>Settings</small>
+        </div>
+      </a>
+
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-body d-flex align-items-end flex-column">
+          <div class="d-flex align-items-center mt-auto">
             <div class="me-2">
               <small>You're logged in as <strong>{{ user.username }}</strong></small>
             </div>
@@ -64,10 +136,10 @@
               <button type="submit" class="btn btn-outline-danger">Logout</button>
             </form>
           </div>
-          {% comment %} <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form> {% endcomment %}
+        </div>
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasNavbarLabel"><i class="fa-solid fa-gear"></i> Settings</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
       </div>
     </nav>
@@ -76,7 +148,7 @@
 
     {% endblock %}
 
-    <div class="container pt-4">
+    <div class="container">
       {% block content %}
 
       {% endblock %}

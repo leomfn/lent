@@ -32,24 +32,63 @@ class LendItem(models.Model):
     def __str__(self):
         return self.name
 
-    def is_currently_available(self):
+    def is_overdue(self):
+        """
+        An item is overdue if there is a lent that has not returned (time_return is null)
+        although time_end is already in the past
+        """
         current_time = timezone.now()
+        return self.itemlend_set.filter(
+            time_end__lt=current_time, time_return__isnull=True
+        ).exists()
+
+    def overdue_since(self):
+        if not self.is_overdue():
+            return None
+
+        current_time = timezone.now()
+        return (
+            self.itemlend_set.filter(
+                time_end__lt=current_time, time_return__isnull=True
+            )
+            .order_by("-time_end")
+            .first()
+            .time_end
+        )
+
+    def is_currently_available(self):
+        """
+        An item is available if there are no active lents, meaning time_start is in the
+        past and item has not been returned.
+        """
+        current_time = timezone.now()
+
+        if self.is_overdue():
+            return False
+
         return not self.itemlend_set.filter(
-            time_start__lte=current_time,
-            time_end__gte=current_time,
-            time_return__isnull=True,
+            Q(time_start__lte=current_time, time_return__isnull=True)
         ).exists()
 
     def is_available_between(
         self, datetime_start: datetime.datetime, datetime_end: datetime.datetime
     ) -> bool:
+        """
+        An item is available during a time slot if
+            * the requested start time is not in the past AND
+            * there are no overdue lents
+            * there no planned lents that clash with the requested time slot
+        """
+
+        current_time = timezone.now()
+
+        if datetime_start < current_time or self.is_overdue():
+            return False
+
         return not self.itemlend_set.filter(
-            (
-                Q(time_return__isnull=True)
-                & Q(time_start__lt=datetime_end)
-                & Q(time_end__gt=datetime_start)
-            )
-            | (Q(time_start__lt=datetime_end) & Q(time_return__gt=datetime_start))
+            time_start__lte=datetime_end,
+            time_end__gte=datetime_start,
+            time_return__isnull=True,
         ).exists()
 
     def get_current_lent(self):

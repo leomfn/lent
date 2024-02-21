@@ -3,24 +3,28 @@
 
 {% block content_top %}
   {% if item_list %}
-    <div class="container pt-4">
-      <div class="alert alert-success d-flex align-items-center justify-content-between" role="alert">
-        <div>
-          Choose an item to book for <strong>{{ duration }} hours</strong> from {{ datetime_start|localtime }} to {{ datetime_end|localtime }}
-        </div>
-        <div>
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">Change time</button>
-          <a role="button" href="{% url 'items' %}" class="btn btn-primary">Show all items</a>
+    <div class="container">
+      <div class="alert alert-success" role="alert">
+        <div class="d-flex flex-column flex-md-row align-items-center">
+          <div class="flex-grow-1">
+            Choose an item to book for <strong>{{ duration }} hours</strong> from {{ datetime_start|localtime }} to {{ datetime_end|localtime }}.
+          </div>
+          <div class="mt-2">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">Change time</button>
+            <a role="button" href="{% url 'items' %}" class="btn btn-primary">Show all items</a>
+          </div>
         </div>
       </div>
     </div>
   {% else %}
-    <div class="container pt-4">
-      <div class="alert alert-warning d-flex align-items-center justify-content-between" role="alert">
-        <div>No item available between {{ datetime_start|localtime }} and {{ datetime_end|localtime }}</div>
-        <div>
-          <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#filterModal">Change time</button>
-          <a role="button" href="{% url 'items' %}" class="btn btn-warning">Show all items</a>
+    <div class="container">
+      <div class="alert alert-warning" role="alert">
+        <div class="d-flex flex-column flex-md-row align-items-center">
+          <div class="flex-grow-1">No item available between {{ datetime_start|localtime }} and {{ datetime_end|localtime }}.</div>
+          <div class="mt-2">
+            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#filterModal">Change time</button>
+            <a role="button" href="{% url 'items' %}" class="btn btn-warning">Show all items</a>
+          </div>
         </div>
       </div>
     </div>
@@ -28,13 +32,17 @@
 {% endblock %}
 
 {% block additional_itemcard_buttons %}
-  <div class="me-2">
-    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#termsModal{{item.id}}">Book</button>
-    {% comment %} <form action="{% url 'book-item' item.id %}" method="post" class="">
-      {% csrf_token %}
-      <input type="hidden" name="datetime_start" value="{{ datetime_start|date:'c' }}" />
-      <input type="hidden" name="datetime_end" value="{{ datetime_end|date:'c' }}" />
-      <button type="submit" class="btn btn-success">Book</button>
-    </form> {% endcomment %}
+  <div class="card-header">
+    <div class="d-flex justify-content-start">
+      <div class="me-2">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#termsModal{{ item.id }}">Book</button>
+        {% comment %} <form action="{% url 'book-item' item.id %}" method="post" class="">
+          {% csrf_token %}
+          <input type="hidden" name="datetime_start" value="{{ datetime_start|date:'c' }}" />
+          <input type="hidden" name="datetime_end" value="{{ datetime_end|date:'c' }}" />
+          <button type="submit" class="btn btn-success">Book</button>
+        </form> {% endcomment %}
+      </div>
+    </div>
   </div>
 {% endblock %}
