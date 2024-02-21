@@ -1,0 +1,4 @@
+Django==4.2.10
+django-bootstrap-v5==1.0.11
+fontawesomefree==6.5.1
+gunicorn==21.2.0
