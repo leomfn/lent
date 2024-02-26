@@ -1,11 +1,14 @@
 services:
   lent-app:
-    build: .
-    ports:
-      - 8011:8000
     env_file:
       - .env.dev
     volumes:
       - ./data:/data
-      - ./static:/static
-      - ./src:/src
+      # - ./static:/static
+      # - ./src:/src
+    # stdin_open: true
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /src

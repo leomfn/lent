@@ -6,11 +6,15 @@ Lent is a Django application enabling its users to easily borrow an item for a s
 
 ## Development notes
 
+### Database initialization
+
+If you don't provide a database (e. g. from earlier usage of the program), a sqlite database file will be created at the first start of the program. This is defined in the *init.sh* shell script.
+
 ### Development environment
 
 You'll need docker and docker compose to run the development container. You must supply a *.env.dev* file that holds the necessary environment variables (see [Environment variables](#environment-variables)).
 
-Start the development container using `docker compose up -d --build`. The *docker-compose.yml* file holds the configuration for the production environment, however, it is overwritten by *docker-compose.override.yml*, which holds development specific settings.
+Start the development container using `docker compose watch`. The *docker-compose.yml* file holds the configuration for the production environment, however, it is overwritten by *docker-compose.override.yml*, which holds development specific settings. [`watch`](https://docs.docker.com/compose/file-watch/) will listen to code changes made in */src* and sync the changes to the container, which the Django development server will pick up, resulting in a hot-reload.
 
 The *Dockerfile* is set to execute *init.sh* which, if `DEBUG='ON'`, will start the development server. The server is automatically restarted when you change the local source code.
 
@@ -26,10 +30,13 @@ Use docker compose to run the Django sever in production. Supply a *.env.prod* f
 HOST                # comma-separated hosts, e. g. 'localhost,127.0.0.1'
 SECRET_KEY          # Django secret key, keep it secret!
 DEBUG               # Django is set to debug mode if environmental is set to 'ON', while setting it to 'OFF' will activate production mode
-DB_FILE_PATH        # path to database file including file name
+DB_FILE_PATH        # path to database file
 STATIC_FILES_PATH   # path to static files like pictures
 TIME_ZONE           # Time zone to be used for the frontend, should reflect the time zone of userbase/items (e. g. 'Europe/Berlin')
 LANGUAGE_CODE       # sets locale for displaying date, time formats etc. (e. g. 'en-us' or 'de-de'), ⚠️ doesn't work yet for input format in form fields, depends on browser locale
+DJANGO_ADMIN_USERNAME   # django superuser username which is set the first time you initialize the app
+DJANGO_ADMIN_EMAIL      # django superuser email addresss which is set the first time you initialize the app
+DJANGO_ADMIN_PASSWORD   # django superuser password which is set the first time you initialize the app
 ```
 
 ### Database migration

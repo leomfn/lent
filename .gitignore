@@ -8,3 +8,8 @@ static
 .backup
 
 deploy*
+
+node_modules
+dist
+
+.DS_Store
