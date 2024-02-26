@@ -1,0 +1,27 @@
+{
+  "name": "lent",
+  "version": "1.0.0",
+  "description": "Lent is a Django application enabling its users to easily borrow an item for a specific timeslot.",
+  "main": "assets/index.js",
+  "scripts": {
+    "build": "webpack build --mode=production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Leo Fuhrmann",
+  "license": "UNLICENSED",
+  "private": true,
+  "devDependencies": {
+    "@fortawesome/fontawesome-free": "6.5.1",
+    "autoprefixer": "10.4.17",
+    "bootstrap": "5.3.3",
+    "css-loader": "6.10.0",
+    "mini-css-extract-plugin": "^2.8.0",
+    "postcss": "8.4.35",
+    "postcss-loader": "8.1.0",
+    "sass": "1.71.1",
+    "sass-loader": "14.1.1",
+    "style-loader": "3.3.4",
+    "webpack": "5.90.3",
+    "webpack-cli": "5.1.4"
+  }
+}

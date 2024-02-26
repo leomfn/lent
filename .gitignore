@@ -3,8 +3,14 @@ __pycache__
 *.sqlite3
 
 .env*
+!.env.example
 
 static
 .backup
 
 deploy*
+
+node_modules
+dist
+
+.DS_Store
