@@ -39,6 +39,8 @@ DJANGO_ADMIN_EMAIL      # django superuser email addresss which is set the first
 DJANGO_ADMIN_PASSWORD   # django superuser password which is set the first time you initialize the app
 ```
 
+An example .env file (*.env.example*) is provided. To get started, change the values to your needs and rename the file to .env.dev for development or .env.prod for production.
+
 ### Database migration
 
 Migrate after model changes, example:
