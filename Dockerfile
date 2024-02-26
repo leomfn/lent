@@ -1,5 +1,5 @@
 # Stage 1: Build frontend assets using npm and webpack
-FROM node:21.6-alpine@sha256:f5d3a6aea1b1d35066e6c034f5c264cd5b051fc7c7cb0160bb88899e7b1f0c83 AS assets-builder
+FROM node:21.6-alpine@sha256:d3271e4bd89eec4d97087060fd4db0c238d9d22fcfad090a73fa9b5128699888 AS assets-builder
 
 WORKDIR /workdir
 
